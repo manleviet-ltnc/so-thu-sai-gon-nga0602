@@ -23,7 +23,7 @@ namespace sở_thú_sài_gòn
             ListBox lb = (ListBox)sender;
             int index = lb.IndexFromPoint(e.X, e.Y);
             if (index != -1)
-                   lb.DoDragDrop(lb.Items[index].ToString(), DragDropEffects.Copy);
+                lb.DoDragDrop(lb.Items[index].ToString(), DragDropEffects.Copy);
 
         }
         private void ListBox_DragEnter(object sender, DragEventArgs e)
@@ -35,15 +35,25 @@ namespace sở_thú_sài_gòn
         }
         private void lstDanhSach_DragDrop(object sender, DragEventArgs e)
         {
-            if(e.Data.GetDataPresent(DataFormats.Text))
+            if (e.Data.GetDataPresent(DataFormats.Text))
             {
-                ListBox lb = (ListBox)sender;
-                lb.Items.Add(e.Data.GetData(DataFormats.Text));
+                bool test = false;
+                for (int i = 0; i < lstDanhSach.Items.Count; i++)
+                {
+                    string st = lstDanhSach.Items[i].ToString();
+                    string data = e.Data.GetData(DataFormats.Text).ToString();
+                    if (data == st)
+                        test = true;
+                }
+                if (test == false)
+                {
+                    ListBox lb = (ListBox)sender;
+                    lb.Items.Add(e.Data.GetData(DataFormats.Text));
 
-
+                }
             }
         }
-        private void Save (object sender, EventArgs e )
+        private void Save(object sender, EventArgs e)
         {
             StreamWriter write = new StreamWriter("Danhsachthu.txt");
             if (write == null) return;
@@ -53,7 +63,7 @@ namespace sở_thú_sài_gòn
 
         }
 
-       private void mnuClose_Click(object sender, EventArgs e)
+        private void mnuClose_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -66,7 +76,7 @@ namespace sở_thú_sài_gòn
                 if (reader == null)
                     return;
 
-                string input=null;
+                string input = null;
                 while ((input = reader.ReadLine()) != null)
                 {
                     lstThuMoi.Items.Add(input);
@@ -95,10 +105,13 @@ namespace sở_thú_sài_gòn
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            timer1.Enabled = true; 
+            timer1.Enabled = true;
         }
-
-
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            lstDanhSach.Items.Remove(lstDanhSach.SelectedItem);
         }
     }
+}
+      
 

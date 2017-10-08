@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
@@ -17,7 +16,7 @@ namespace sở_thú_sài_gòn
         {
             InitializeComponent();
         }
-
+       
         private void listBox_MouseDown(Object sender, MouseEventArgs e)
         {
             ListBox lb = (ListBox)sender;
@@ -47,12 +46,19 @@ namespace sở_thú_sài_gòn
                 }
                 if (test == false)
                 {
-                    ListBox lb = (ListBox)sender;
-                    lb.Items.Add(e.Data.GetData(DataFormats.Text));
+                    int newIndex = lstDanhSach.IndexFromPoint(lstDanhSach.PointToClient(new Point(e.X, e.Y)));
+                    object selectedItem = e.Data.GetData(DataFormats.Text);
+
+                    lstDanhSach.Items.Remove(selectedItem);
+                    if (newIndex != -1)
+                        lstDanhSach.Items.Insert(newIndex, selectedItem);
+                    else
+                        lstDanhSach.Items.Insert(lstDanhSach.Items.Count, selectedItem);
 
                 }
             }
         }
+      
         private void Save(object sender, EventArgs e)
         {
             StreamWriter write = new StreamWriter("Danhsachthu.txt");
@@ -60,6 +66,7 @@ namespace sở_thú_sài_gòn
             foreach (var item in lstDanhSach.Items)
                 write.WriteLine(item.ToString());
             write.Close();
+            
 
         }
 
@@ -110,6 +117,27 @@ namespace sở_thú_sài_gòn
         private void btnXoa_Click(object sender, EventArgs e)
         {
             lstDanhSach.Items.Remove(lstDanhSach.SelectedItem);
+        }
+        bool luu = false;
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+           
+            if (luu == false)
+            {
+                DialogResult kq = MessageBox.Show("Bạn có muốn lưu danh sách?",
+                                                "Thông báo", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (kq == DialogResult.Yes)
+                { 
+                    Save(sender, e);
+                    e.Cancel = false;
+                }
+                else if (kq == DialogResult.No)
+                    e.Cancel = false;
+                else
+                    e.Cancel = true;
+            }
+            else
+                mnuClose_Click(sender, e);
         }
     }
 }
